@@ -5,7 +5,6 @@ const App = () => {
   return (
     <>
       <Navbar />
-      <h1>Hello I Am the App</h1>
       <RouteList />
     </>
   );

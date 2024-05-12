@@ -1,7 +1,7 @@
 "use strict";
 /** Database setup for jobly. */
 const { Client } = require("pg");
-const { getDatabaseUri } = require("./config");
+const { PGPASSWORD, getDatabaseUri } = require("./config");
 
 /** Convert numeric data types to Javascript floating point numbers */
 var types = require("pg").types;
@@ -14,6 +14,7 @@ let db;
 if (process.env.NODE_ENV === "production") {
   db = new Client({
     connectionString: getDatabaseUri(),
+    password: PGPASSWORD,
     ssl: {
       rejectUnauthorized: false,
     },
@@ -21,6 +22,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
   db = new Client({
     connectionString: getDatabaseUri(),
+    password: PGPASSWORD,
   });
 }
 
