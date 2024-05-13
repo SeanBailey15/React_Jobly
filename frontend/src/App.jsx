@@ -1,10 +1,16 @@
-import Navbar from "./components/Navbar";
+import NavComponent from "./components/Navbar";
 import RouteList from "./RouteList";
 
 const App = () => {
   return (
     <>
-      <Navbar />
+      <NavComponent
+        color="dark"
+        light={false}
+        dark={true}
+        expand="md"
+        container="fluid"
+      />
       <RouteList />
     </>
   );

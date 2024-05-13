@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
+import { ListGroup, ListGroupItem, Spinner } from "reactstrap";
+import { Link } from "react-router-dom";
 import JoblyApi from "../api";
+import "../styles/Companies.css";
+import CompanySearchForm from "./CompanySearchForm";
 
 export default function Companies() {
   const [data, setData] = useState(null);
@@ -21,18 +25,59 @@ export default function Companies() {
     getCompanies();
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!data) return null;
+  if (isLoading)
+    return (
+      <div className="Companies">
+        <Spinner className="Companies-spinner" color="secondary">
+          Loading...
+        </Spinner>
+      </div>
+    );
+  if (error) {
+    return (
+      <div className="Companies">
+        <h1 className="Companies-title">Error: {error}</h1>
+      </div>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <div className="Companies">
+        <h1 className="Companies-title">Company Directory</h1>
+        <div className="Companie-searchForm">
+          <CompanySearchForm
+            setData={setData}
+            setIsLoading={setIsLoading}
+            setError={setError}
+          />
+        </div>
+        <h1 className="Companies-title">No Results</h1>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1>List All Companies!</h1>
-      <ul>
+    <div className="Companies">
+      <h1 className="Companies-title">Company Directory</h1>
+      <div className="Companie-searchForm">
+        <CompanySearchForm
+          setData={setData}
+          setIsLoading={setIsLoading}
+          setError={setError}
+        />
+      </div>
+      <ListGroup className="Companies-list">
         {data.map((company) => (
-          <li key={company.handle}>{company.name}</li>
+          <ListGroupItem className="Companies-listItem" key={company.handle}>
+            <Link
+              className="Companies-link"
+              to={`/companies/${company.handle}`}
+            >
+              {company.name}
+            </Link>
+          </ListGroupItem>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 }

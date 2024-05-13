@@ -42,7 +42,11 @@ export default class JoblyApi {
     return res.company;
   }
 
-  static async getAllCompanies() {
+  static async getAllCompanies(data) {
+    if (data) {
+      let res = await this.request(`companies`, data);
+      return res.companies;
+    }
     let res = await this.request(`companies`);
     return res.companies;
   }

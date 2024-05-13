@@ -18,26 +18,21 @@ class Company {
 
   static async create({ handle, name, description, numEmployees, logoUrl }) {
     const duplicateCheck = await db.query(
-          `SELECT handle
+      `SELECT handle
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]
+    );
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${handle}`);
 
     const result = await db.query(
-          `INSERT INTO companies
+      `INSERT INTO companies
            (handle, name, description, num_employees, logo_url)
            VALUES ($1, $2, $3, $4, $5)
            RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
-        [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      [handle, name, description, numEmployees, logoUrl]
     );
     const company = result.rows[0];
 
@@ -64,28 +59,27 @@ class Company {
     let whereExpressions = [];
     let queryValues = [];
 
-    const { minEmployees, maxEmployees, name } = searchFilters;
+    const { name, minEmployees, maxEmployees } = searchFilters;
 
-    if (minEmployees > maxEmployees) {
+    if (minEmployees && maxEmployees && minEmployees > maxEmployees) {
       throw new BadRequestError("Min employees cannot be greater than max");
     }
 
     // For each possible search term, add to whereExpressions and queryValues so
     // we can generate the right SQL
+    if (name && name !== "") {
+      queryValues.push(`%${name}%`);
+      whereExpressions.push(`name ILIKE $${queryValues.length}`);
+    }
 
-    if (minEmployees !== undefined) {
+    if (minEmployees !== undefined && minEmployees !== 0) {
       queryValues.push(minEmployees);
       whereExpressions.push(`num_employees >= $${queryValues.length}`);
     }
 
-    if (maxEmployees !== undefined) {
+    if (maxEmployees !== undefined && maxEmployees !== 0) {
       queryValues.push(maxEmployees);
       whereExpressions.push(`num_employees <= $${queryValues.length}`);
-    }
-
-    if (name) {
-      queryValues.push(`%${name}%`);
-      whereExpressions.push(`name ILIKE $${queryValues.length}`);
     }
 
     if (whereExpressions.length > 0) {
@@ -109,25 +103,26 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(
-          `SELECT handle,
+      `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]
+    );
 
     const company = companyRes.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
 
     const jobsRes = await db.query(
-          `SELECT id, title, salary, equity
+      `SELECT id, title, salary, equity
            FROM jobs
            WHERE company_handle = $1
            ORDER BY id`,
-        [handle],
+      [handle]
     );
 
     company.jobs = jobsRes.rows;
@@ -148,12 +143,10 @@ class Company {
    */
 
   static async update(handle, data) {
-    const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      numEmployees: "num_employees",
+      logoUrl: "logo_url",
+    });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE companies 
@@ -179,16 +172,16 @@ class Company {
 
   static async remove(handle) {
     const result = await db.query(
-          `DELETE
+      `DELETE
            FROM companies
            WHERE handle = $1
            RETURNING handle`,
-        [handle]);
+      [handle]
+    );
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
   }
 }
-
 
 module.exports = Company;

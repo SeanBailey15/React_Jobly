@@ -1,0 +1,54 @@
+.Company {
+  box-sizing: border-box;
+  margin: 1rem;
+}
+
+.Company-card {
+  width: 75%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: lightgray;
+}
+
+.Company-title {
+  text-align: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: darkgray;
+  border-radius: 10px;
+}
+
+.Company-text {
+  padding: 1em;
+  text-align: center;
+  font-size: 1.5em;
+  color: white;
+}
+
+.Company-msg {
+  text-align: center;
+  margin: 1rem 0;
+  color: white;
+}
+
+.Company-list {
+  width: 50%;
+  text-align: center;
+  margin: auto;
+}
+
+.Company-listItem {
+  background-color: lightgray;
+}
+
+.Company-listItem:hover,
+.Company-link:hover {
+  background-color: rgb(133, 133, 133);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.Company-link {
+  text-decoration: none;
+  color: black;
+}

@@ -1,0 +1,36 @@
+.Companies {
+  box-sizing: border-box;
+  margin: 1rem;
+}
+
+.Companies-title {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.Companies-list {
+  width: 50%;
+  text-align: center;
+  margin: auto;
+}
+
+.Companies-listItem {
+  background-color: lightgray;
+}
+
+.Companies-listItem:hover,
+.Companies-link:hover {
+  background-color: rgb(133, 133, 133);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.Companies-link {
+  text-decoration: none;
+  color: black;
+}
+
+.Companies-spinner {
+  margin: 50%;
+  align-self: center;
+}
