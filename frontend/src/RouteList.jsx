@@ -7,6 +7,7 @@ import Companies from "./components/Companies";
 import Company from "./components/Company";
 import Jobs from "./components/Jobs";
 import Job from "./components/Job";
+// import ErrorPage from "./components/ErrorPage";
 
 export default function RouteList() {
   return (
@@ -20,6 +21,7 @@ export default function RouteList() {
         <Route path="/companies/:handle" element={<Company />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<Job />} />
+        {/* <Route path="/error" element={<ErrorPage />} /> */}
       </Routes>
     </BrowserRouter>
   );

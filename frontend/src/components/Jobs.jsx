@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { ListGroup, ListGroupItem, Spinner } from "reactstrap";
+import { Link } from "react-router-dom";
 import JoblyApi from "../api";
+import "../styles/Jobs.css";
 
 export default function Jobs() {
   const [data, setData] = useState(null);
@@ -21,20 +24,42 @@ export default function Jobs() {
     getJobs();
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!data) return null;
+  if (isLoading)
+    return (
+      <div className="Jobs">
+        <Spinner className="Jobs-spinner" color="secondary">
+          Loading...
+        </Spinner>
+      </div>
+    );
+  if (error) {
+    return (
+      <div className="Jobs">
+        <h1 className="Jobs-title">Error: {error}</h1>
+      </div>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <div className="Jobs">
+        <h1 className="Jobs-title">Job Directory</h1>
+        <h1 className="Jobs-title">No Results</h1>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1>List All Jobs!</h1>
-      <ul>
+    <div className="Jobs">
+      <h1 className="Jobs-title">Job Directory</h1>
+      <ListGroup className="Jobs-list">
         {data.map((job) => (
-          <li key={job.id}>
-            {job.title} : Salary - {job.salary ? job.salary : "Unknown"}
-          </li>
+          <ListGroupItem className="Jobs-listItem" key={job.id}>
+            <Link className="Jobs-link" to={`/jobs/${job.id}`}>
+              {job.title}
+            </Link>
+          </ListGroupItem>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 }

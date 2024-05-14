@@ -6,7 +6,7 @@ import {
   CardText,
   ListGroup,
   ListGroupItem,
-  Button,
+  Spinner,
 } from "reactstrap";
 import JoblyApi from "../api";
 import "../styles/Company.css";
@@ -14,7 +14,6 @@ import "../styles/Company.css";
 export default function Company() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { handle } = useParams();
 
   useEffect(() => {
@@ -22,8 +21,8 @@ export default function Company() {
       try {
         const res = await JoblyApi.getCompany(handle);
         setData(res);
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
@@ -32,13 +31,27 @@ export default function Company() {
     getCompany();
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!data) return null;
+  if (isLoading)
+    return (
+      <div className="Company">
+        <Spinner className="Company-spinner" color="secondary">
+          Loading...
+        </Spinner>
+      </div>
+    );
+
+  if (data.length === 0) {
+    return (
+      <div className="Company">
+        <h1 className="Company-title">Company Details</h1>
+        <h1 className="Company-title">No Results</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="Company">
-      <Card className="Company-card" color="dark">
+      <Card className="Company-card">
         <CardTitle className="Company-title" tag="h1">
           {data.name}
         </CardTitle>

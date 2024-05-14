@@ -1,49 +1,44 @@
-.Companies {
+.Jobs {
   box-sizing: border-box;
   margin: 1rem;
 }
 
-.Companies-title {
+.Jobs-title {
   text-align: center;
   margin: 1rem 0;
 }
 
-.Companies-searchForm {
-  width: 50%;
-  margin: 1rem auto;
-}
-
-.Companies-list {
+.Jobs-list {
   width: 50%;
   text-align: center;
   margin: auto;
 }
 
-.Companies-listItem:nth-child(even) {
+.Jobs-listItem:nth-child(even) {
   background-color: lightgray;
 }
 
-.Companies-listItem:nth-child(odd) {
+.Jobs-listItem:nth-child(odd) {
   background-color: rgb(248, 248, 248);
 }
 
-.Companies-listItem:hover,
-.Companies-link:hover {
+.Jobs-listItem:hover,
+.Jobs-link:hover {
   background-color: rgb(133, 133, 133);
   font-weight: 700;
   text-decoration: underline;
 }
 
-.Companies-link {
+.Jobs-link {
   text-decoration: none;
   color: black;
 }
 
-.Companies-link:visited {
+.Jobs-link:visited {
   color: purple;
 }
 
-.Companies-spinner {
+.Jobs-spinner {
   margin: 50%;
   align-self: center;
 }

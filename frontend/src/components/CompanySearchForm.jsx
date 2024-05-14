@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Form, FormGroup, Input, Button } from "reactstrap";
+import { Form, FormGroup, Label, Input, FormText, Button } from "reactstrap";
 import JoblyApi from "../api";
+import "../styles/CompanySearchForm.css";
 
-export default function CompanySearchForm({ setData, setIsLoading, setError }) {
+export default function CompanySearchForm({ setData, setIsLoading }) {
   const INITIAL_STATE = {
     name: "",
     minEmployees: "",
@@ -25,7 +26,21 @@ export default function CompanySearchForm({ setData, setIsLoading, setError }) {
       const res = await JoblyApi.getAllCompanies(formData);
       setData(res);
     } catch (error) {
-      setError(error.message);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+      setFormData(INITIAL_STATE);
+    }
+  }
+
+  async function handleReset(e) {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const res = await JoblyApi.getAllCompanies();
+      setData(res);
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsLoading(false);
       setFormData(INITIAL_STATE);
@@ -34,19 +49,26 @@ export default function CompanySearchForm({ setData, setIsLoading, setError }) {
 
   return (
     <div className="Form">
+      <h3 className="Form-title">Filter Companies By:</h3>
       <Form onSubmit={handleSubmit}>
-        <FormGroup>
+        <FormGroup floating>
           <Input
+            className="Form-input"
             id="name"
             name="name"
-            placeholder="Company Name"
+            placeholder="Company Name*"
             type="text"
             value={formData.name}
             onChange={handleChange}
           />
+          <Label className="Form-label" for="name">
+            Company Name*
+          </Label>
+          <FormText>*Will find any close match.</FormText>
         </FormGroup>
-        <FormGroup>
+        <FormGroup floating>
           <Input
+            className="Form-input"
             id="minEmployees"
             name="minEmployees"
             placeholder="Minimum Number Of Employees"
@@ -54,9 +76,13 @@ export default function CompanySearchForm({ setData, setIsLoading, setError }) {
             value={formData.minEmployees}
             onChange={handleChange}
           />
+          <Label className="Form-label" for="minEmployees">
+            Minimum Number Of Employees
+          </Label>
         </FormGroup>
-        <FormGroup>
+        <FormGroup floating>
           <Input
+            className="Form-input"
             id="maxEmployees"
             name="maxEmployees"
             placeholder="Maximum Number Of Employees"
@@ -64,8 +90,16 @@ export default function CompanySearchForm({ setData, setIsLoading, setError }) {
             value={formData.maxEmployees}
             onChange={handleChange}
           />
+          <Label className="Form-label" for="maxEmployees">
+            Maximum Number Of Employees
+          </Label>
         </FormGroup>
-        <Button type="submit">Search</Button>
+        <Button className="Form-btn" type="submit">
+          Search
+        </Button>
+        <Button className="Form-btn" type="button" onClick={handleReset}>
+          Clear Results
+        </Button>
       </Form>
     </div>
   );

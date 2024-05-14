@@ -1,0 +1,18 @@
+.Form {
+  padding: 1rem;
+  border: 2px solid rgba(58, 58, 58, 0.664);
+  border-radius: 20px;
+}
+
+.Form-label::after {
+  visibility: hidden;
+}
+
+.Form-input {
+  border: 2px solid rgba(58, 58, 58, 0.664);
+}
+
+.Form-btn {
+  width: 100%;
+  margin: 0.5rem 0;
+}
