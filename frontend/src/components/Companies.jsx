@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ListGroup, ListGroupItem, Spinner } from "reactstrap";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import JoblyApi from "../api";
 import CompanySearchForm from "./CompanySearchForm";
 import "../styles/Companies.css";
@@ -8,6 +8,9 @@ import "../styles/Companies.css";
 export default function Companies() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getCompanies() {
@@ -15,7 +18,7 @@ export default function Companies() {
         const res = await JoblyApi.getAllCompanies();
         setData(res);
       } catch (err) {
-        console.error(err);
+        setError(err);
       } finally {
         setIsLoading(false);
       }
@@ -23,6 +26,10 @@ export default function Companies() {
 
     getCompanies();
   }, []);
+
+  if (error !== null) {
+    navigate("/error", { state: { error } });
+  }
 
   if (isLoading)
     return (

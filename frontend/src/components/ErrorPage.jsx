@@ -1,8 +1,16 @@
-import { useContext } from "react";
-import ErrorContext from "../ErrorContext";
+import { useLocation } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 
 export default function ErrorPage() {
-  const { error } = useContext(ErrorContext);
+  const { state } = useLocation();
 
-  return <h1>{error}</h1>;
+  return (
+    <div className="Error">
+      <ul className="Error-list">
+        {state.error.map((e) => (
+          <li key={uuid()}>{e}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }

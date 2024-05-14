@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ListGroup, ListGroupItem, Spinner } from "reactstrap";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import JoblyApi from "../api";
 import "../styles/Jobs.css";
 
@@ -8,6 +8,8 @@ export default function Jobs() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getJobs() {
@@ -24,6 +26,10 @@ export default function Jobs() {
     getJobs();
   }, []);
 
+  if (error !== null) {
+    navigate("/error", { state: { error } });
+  }
+
   if (isLoading)
     return (
       <div className="Jobs">
@@ -32,13 +38,7 @@ export default function Jobs() {
         </Spinner>
       </div>
     );
-  if (error) {
-    return (
-      <div className="Jobs">
-        <h1 className="Jobs-title">Error: {error}</h1>
-      </div>
-    );
-  }
+
   if (data.length === 0) {
     return (
       <div className="Jobs">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Card,
   CardTitle,
@@ -14,7 +14,10 @@ import "../styles/Company.css";
 export default function Company() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { handle } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getCompany() {
@@ -22,7 +25,7 @@ export default function Company() {
         const res = await JoblyApi.getCompany(handle);
         setData(res);
       } catch (err) {
-        console.error(err);
+        setError(err);
       } finally {
         setIsLoading(false);
       }
@@ -30,6 +33,10 @@ export default function Company() {
 
     getCompany();
   }, []);
+
+  if (error !== null) {
+    navigate("/error", { state: { error: error } });
+  }
 
   if (isLoading)
     return (
@@ -55,9 +62,7 @@ export default function Company() {
         <CardTitle className="Company-title" tag="h1">
           {data.name}
         </CardTitle>
-        <CardText className="Company-text">
-          With supporting text below as a natural lead-in to additional content.
-        </CardText>
+        <CardText className="Company-text">{data.description}</CardText>
         <h2 className="Company-msg">Now Hiring For:</h2>
         <ListGroup className="Company-list">
           {data.jobs.map((job) => (
