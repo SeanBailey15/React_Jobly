@@ -1,16 +1,27 @@
 import { Formik } from "formik";
-import {
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback,
-  Button,
-} from "reactstrap";
+import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import JoblyApi from "../api";
+import { useContext } from "react";
+import { jwtDecode } from "jwt-decode";
+import UserContext from "../contexts/UserContext";
 import "../styles/SignUpForm.css";
 
 export default function SignUpForm() {
+  const { currentUser, setCurrentUser, token, setToken } =
+    useContext(UserContext);
+
+  async function processToken(formData) {
+    const token = await JoblyApi.registerUser(formData);
+    setToken(token);
+    setCurrentUser(decodeToken(token));
+  }
+
+  function decodeToken(token) {
+    const data = jwtDecode(token);
+    console.log(`I am in decodeToken`, data);
+    return data.username;
+  }
+
   return (
     <div className="Form">
       <h1 className="Form-title">Sign up to access Jobly opportunities!</h1>
@@ -65,8 +76,8 @@ export default function SignUpForm() {
 
           return errors;
         }}
-        onSubmit={(values) => {
-          console.log(values);
+        onSubmit={async (values) => {
+          await processToken(values);
         }}
       >
         {({ values, errors, touched, handleChange, handleSubmit }) => (
@@ -174,6 +185,8 @@ export default function SignUpForm() {
           </Form>
         )}
       </Formik>
+      {console.log(`I have set the token to:`, token)}
+      {console.log(`I have set the user to:`, currentUser)}
     </div>
   );
 }
