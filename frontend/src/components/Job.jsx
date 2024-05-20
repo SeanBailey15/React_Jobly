@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -8,16 +8,20 @@ import {
   ListGroupItemHeading,
   Spinner,
   ListGroupItemText,
+  Button,
 } from "reactstrap";
 import JoblyApi from "../api";
 import { v4 as uuid } from "uuid";
 import "../styles/Job.css";
+import UserContext from "../contexts/UserContext";
 
 export default function Job() {
+  const { id } = useParams();
+  const { hasAppliedToJob, applyToJob } = useContext(UserContext);
+  const [applied, setApplied] = useState(false);
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { id } = useParams();
 
   const navigate = useNavigate();
 
@@ -25,7 +29,9 @@ export default function Job() {
     async function getJob() {
       try {
         const res = await JoblyApi.getJob(id);
+        const hasApplied = hasAppliedToJob(parseInt(id));
         setData(res);
+        setApplied(hasApplied);
       } catch (err) {
         setError(err);
       } finally {
@@ -34,7 +40,17 @@ export default function Job() {
     }
 
     getJob();
-  }, []);
+  }, [id, hasAppliedToJob]);
+
+  async function handleApply() {
+    if (hasAppliedToJob(data.id)) return;
+    try {
+      await applyToJob(data.id);
+      setApplied(true);
+    } catch (err) {
+      setError(err);
+    }
+  }
 
   if (error !== null) {
     navigate("/error", { state: { error: error } });
@@ -49,18 +65,8 @@ export default function Job() {
       </div>
     );
 
-  if (data.length === 0) {
-    return (
-      <div className="Job">
-        <h1 className="Job-title">Job Details</h1>
-        <h1 className="Job-title">No Results</h1>
-      </div>
-    );
-  }
-
   return (
     <div className="Job">
-      {console.log(data)}
       <Card className="Job-card">
         <CardTitle className="Job-title" tag="h1">
           {data.title}
@@ -118,6 +124,9 @@ export default function Job() {
             </ListGroupItemText>
           </ListGroupItem>
         </ListGroup>
+        <Button className="Job-btn" onClick={handleApply} disabled={applied}>
+          {applied ? "Applied" : "Apply"}
+        </Button>
       </Card>
     </div>
   );

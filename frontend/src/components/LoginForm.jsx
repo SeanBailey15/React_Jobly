@@ -2,9 +2,9 @@ import { Formik } from "formik";
 import { Form, FormGroup, Label, Input, InputGroup, Button } from "reactstrap";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/SignUpForm.css";
+import "../styles/LoginForm.css";
 
-export default function SignUpForm({ signUp }) {
+export default function LoginForm({ login }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
@@ -15,49 +15,22 @@ export default function SignUpForm({ signUp }) {
 
   return (
     <div className="Form">
-      <h1 className="Form-title">Sign up to access Jobly opportunities!</h1>
+      <h1 className="Form-title">Login to access Jobly opportunities!</h1>
       <p>
-        Already a registered user? Login <Link to="/login">here</Link>.
+        Not a registered user yet? Sign up <Link to="/signup">here</Link>.
       </p>
       <Formik
         initialValues={{
-          firstName: "",
-          lastName: "",
           username: "",
-          email: "",
           password: "",
         }}
         validate={(values) => {
           const errors = {};
 
-          if (!values.firstName) {
-            errors.firstName = "Required";
-          } else if (values.firstName.length > 30) {
-            errors.firstName = "First name must be 30 characters or less.";
-          }
-
-          if (!values.lastName) {
-            errors.lastName = "Required";
-          } else if (values.lastName.length > 30) {
-            errors.lastName = "Last name must be 30 characters or less.";
-          }
-
           if (!values.username) {
             errors.username = "Required";
           } else if (values.username.length > 30) {
             errors.username = "Username must be 30 characters or less.";
-          }
-
-          if (!values.email) {
-            errors.email = "Required";
-          } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-          ) {
-            errors.email = "Invalid email address.";
-          } else if (values.email.length < 6) {
-            errors.email = "Email must be 6 characters or more.";
-          } else if (values.email.length > 60) {
-            errors.email = "Email must be 60 characters or less.";
           }
 
           if (!values.password) {
@@ -72,7 +45,7 @@ export default function SignUpForm({ signUp }) {
         }}
         onSubmit={async (values) => {
           try {
-            await signUp(values);
+            await login(values);
             navigate("/", { replace: true });
           } catch (err) {
             console.error(err);
@@ -82,44 +55,6 @@ export default function SignUpForm({ signUp }) {
       >
         {({ values, errors, touched, handleChange, handleSubmit }) => (
           <Form onSubmit={handleSubmit}>
-            <FormGroup floating>
-              <Input
-                className="Form-input"
-                id="firstName"
-                name="firstName"
-                placeholder="First Name"
-                type="text"
-                value={values.firstName}
-                onChange={handleChange}
-              />
-              <Label className="Form-label" for="firstName">
-                First Name
-              </Label>
-              {errors.firstName && touched.firstName && (
-                <div className="Form-error">
-                  {errors.firstName && touched.firstName && errors.firstName}
-                </div>
-              )}
-            </FormGroup>
-            <FormGroup floating>
-              <Input
-                className="Form-input"
-                id="lastName"
-                name="lastName"
-                placeholder="Last Name"
-                type="text"
-                value={values.lastName}
-                onChange={handleChange}
-              />
-              <Label className="Form-label" for="lastName">
-                Last Name
-              </Label>
-              {errors.lastName && touched.lastName && (
-                <div className="Form-error">
-                  {errors.lastName && touched.lastName && errors.lastName}
-                </div>
-              )}
-            </FormGroup>
             <FormGroup floating>
               <Input
                 className="Form-input"
@@ -140,26 +75,6 @@ export default function SignUpForm({ signUp }) {
                 </div>
               )}
             </FormGroup>
-            <FormGroup floating>
-              <Input
-                className="Form-input"
-                id="email"
-                name="email"
-                placeholder="Email"
-                type="text"
-                value={values.email}
-                onChange={handleChange}
-              />
-              <Label className="Form-label" for="email">
-                Email
-              </Label>
-              {errors.email && touched.email && (
-                <div className="Form-error">
-                  {errors.email && touched.email && errors.email}
-                </div>
-              )}
-            </FormGroup>
-
             <InputGroup>
               <FormGroup floating>
                 <Input
@@ -194,6 +109,7 @@ export default function SignUpForm({ signUp }) {
                 )}
               </Button>
             </InputGroup>
+
             <Button className="Form-btn" type="submit">
               Submit
             </Button>

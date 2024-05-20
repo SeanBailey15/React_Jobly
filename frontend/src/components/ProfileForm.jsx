@@ -1,31 +1,50 @@
 import { Formik } from "formik";
-import { Form, FormGroup, Label, Input, InputGroup, Button } from "reactstrap";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "../styles/SignUpForm.css";
+import {
+  Form,
+  FormGroup,
+  FormText,
+  Label,
+  Input,
+  InputGroup,
+  Button,
+} from "reactstrap";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import UserContext from "../contexts/UserContext";
+import JoblyApi from "../api";
+import "../styles/ProfileForm.css";
 
-export default function SignUpForm({ signUp }) {
+export default function ProfileForm() {
+  const { currentUser, setCurrentUser } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmed, setShowConfirmed] = useState(false);
 
   const navigate = useNavigate();
 
   function togglePasswordVisibility() {
     setShowPassword(!showPassword);
   }
+  function toggleConfirmedVisibility() {
+    setShowConfirmed(!showConfirmed);
+  }
+
+  async function updateProfile(formData) {
+    const username = currentUser.username;
+    const updatedUser = await JoblyApi.updateProfile(username, formData);
+    return updatedUser;
+  }
 
   return (
     <div className="Form">
-      <h1 className="Form-title">Sign up to access Jobly opportunities!</h1>
-      <p>
-        Already a registered user? Login <Link to="/login">here</Link>.
-      </p>
+      <h1 className="Form-title">{`${currentUser.username}'s Profile`}</h1>
+      <h2 className="Form-msg">Edit Your Information:</h2>
       <Formik
         initialValues={{
-          firstName: "",
-          lastName: "",
-          username: "",
-          email: "",
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          email: currentUser.email,
           password: "",
+          confirmPassword: "",
         }}
         validate={(values) => {
           const errors = {};
@@ -40,12 +59,6 @@ export default function SignUpForm({ signUp }) {
             errors.lastName = "Required";
           } else if (values.lastName.length > 30) {
             errors.lastName = "Last name must be 30 characters or less.";
-          }
-
-          if (!values.username) {
-            errors.username = "Required";
-          } else if (values.username.length > 30) {
-            errors.username = "Username must be 30 characters or less.";
           }
 
           if (!values.email) {
@@ -66,13 +79,34 @@ export default function SignUpForm({ signUp }) {
             errors.password = "Password must be 20 characters or less.";
           } else if (values.password.length < 5) {
             errors.password = "Password must be 5 characters or more.";
+          } else if (values.password !== values.confirmPassword) {
+            errors.confirmPassword = "Passwords do not match";
+          }
+
+          if (!values.confirmPassword) {
+            errors.confirmPassword = "Required";
+          } else if (values.confirmPassword.length > 20) {
+            errors.confirmPassword = "Password must be 20 characters or less.";
+          } else if (values.confirmPassword.length < 5) {
+            errors.confirmPassword = "Password must be 5 characters or more.";
+          } else if (values.confirmPassword !== values.password) {
+            errors.confirmPassword = "Passwords do not match";
           }
 
           return errors;
         }}
         onSubmit={async (values) => {
+          let data;
           try {
-            await signUp(values);
+            if (values.password === values.confirmPassword) {
+              data = {
+                firstName: values.firstName,
+                lastName: values.lastName,
+                email: values.email,
+                password: values.password,
+              };
+            }
+            setCurrentUser(await updateProfile(data));
             navigate("/", { replace: true });
           } catch (err) {
             console.error(err);
@@ -123,30 +157,11 @@ export default function SignUpForm({ signUp }) {
             <FormGroup floating>
               <Input
                 className="Form-input"
-                id="username"
-                name="username"
-                placeholder="Username"
-                type="text"
-                autoComplete="username"
-                value={values.username}
-                onChange={handleChange}
-              />
-              <Label className="Form-label" for="username">
-                Username
-              </Label>
-              {errors.username && touched.username && (
-                <div className="Form-error">
-                  {errors.username && touched.username && errors.username}
-                </div>
-              )}
-            </FormGroup>
-            <FormGroup floating>
-              <Input
-                className="Form-input"
                 id="email"
                 name="email"
                 placeholder="Email"
                 type="text"
+                autoComplete="email"
                 value={values.email}
                 onChange={handleChange}
               />
@@ -159,7 +174,6 @@ export default function SignUpForm({ signUp }) {
                 </div>
               )}
             </FormGroup>
-
             <InputGroup>
               <FormGroup floating>
                 <Input
@@ -173,8 +187,12 @@ export default function SignUpForm({ signUp }) {
                   onChange={handleChange}
                 />
                 <Label className="Form-label" for="password">
-                  Password
+                  Password*
                 </Label>
+                <FormText>
+                  *Here you can change your password, if you like. Use your
+                  current password otherwise.
+                </FormText>
                 {errors.password && touched.password && (
                   <div className="Form-error">
                     {errors.password && touched.password && errors.password}
@@ -186,6 +204,42 @@ export default function SignUpForm({ signUp }) {
                 onClick={togglePasswordVisibility}
               >
                 {showPassword ? (
+                  <span className="material-symbols-outlined">
+                    visibility_off
+                  </span>
+                ) : (
+                  <span className="material-symbols-outlined">visibility</span>
+                )}
+              </Button>
+            </InputGroup>
+            <InputGroup>
+              <FormGroup floating>
+                <Input
+                  className="Form-input"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="confirmPassword"
+                  type={showConfirmed ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={values.confirmPassword}
+                  onChange={handleChange}
+                />
+                <Label className="Form-label" for="confirmPassword">
+                  Confirm Password
+                </Label>
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <div className="Form-error">
+                    {errors.confirmPassword &&
+                      touched.confirmPassword &&
+                      errors.confirmPassword}
+                  </div>
+                )}
+              </FormGroup>
+              <Button
+                className="Form-input-btn"
+                onClick={toggleConfirmedVisibility}
+              >
+                {showConfirmed ? (
                   <span className="material-symbols-outlined">
                     visibility_off
                   </span>

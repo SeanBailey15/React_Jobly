@@ -1,37 +1,63 @@
-import React, { useState } from "react";
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-} from "reactstrap";
+import React, { useState, useContext } from "react";
+import UserContext from "../contexts/UserContext";
+import { Link } from "react-router-dom";
+import { Collapse, Navbar, NavbarToggler, Nav, NavItem } from "reactstrap";
+import "../styles/NavBar.css";
 
-export default function NavComponent(args) {
+export default function NavBar(args) {
+  const { currentUser, logout } = useContext(UserContext);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <div>
+    <div className="Nav">
       <Navbar {...args}>
-        <NavbarBrand href="/">Jobly</NavbarBrand>
+        <Link className="Nav-brand" to="/">
+          Jobly
+        </Link>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="ms-auto" navbar>
             <NavItem>
-              <NavLink href="/companies/">Companies</NavLink>
+              <Link className="Nav-link" to="/companies">
+                Companies
+              </Link>
             </NavItem>
             <NavItem>
-              <NavLink href="/jobs/">Jobs</NavLink>
+              <Link className="Nav-link" to="/jobs">
+                Jobs
+              </Link>
             </NavItem>
-            <NavItem>
-              <NavLink href="/profile/">
-                <span className="material-symbols-outlined">person</span>
-              </NavLink>
-            </NavItem>
+            {currentUser && (
+              <NavItem>
+                <Link className="Nav-link" to="/" onClick={logout}>
+                  Logout
+                </Link>
+              </NavItem>
+            )}
+            {currentUser && (
+              <NavItem>
+                <Link className="Nav-link" to={`users/${currentUser.username}`}>
+                  <span className="material-symbols-outlined">person</span>
+                </Link>
+              </NavItem>
+            )}
+            {!currentUser && (
+              <NavItem>
+                <Link className="Nav-link" to="/signup">
+                  Sign Up
+                </Link>
+              </NavItem>
+            )}
+            {!currentUser && (
+              <NavItem>
+                <Link className="Nav-link" to="/login">
+                  Login
+                </Link>
+              </NavItem>
+            )}
           </Nav>
         </Collapse>
       </Navbar>
