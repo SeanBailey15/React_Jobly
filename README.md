@@ -12,7 +12,7 @@ The final product here utilizes all I have learned (and continue to learn) about
 
 If you prefer, you can install the project locally to your machine.
 
-However, this app is currently hosted at (TBD - will update once finished with deployment)
+However, this app is currently hosted on [Render](https://jobly-frontend-tlq7.onrender.com/)
 
 **_This application is built with a PostgreSQL database for the backend. Please ensure you have installed PostgreSQL before proceeding._**
 
@@ -92,7 +92,7 @@ Click the user profile icon in the upper-right corner of the navbar. Here you ca
 
 ## Thank you for checking out my project!
 
-Again, this app is being hosted at (TBD - will update once finished with deployment)
+Again, this app is being hosted on [Render](https://jobly-frontend-tlq7.onrender.com/)
 
 Please stop by and have a look!
 
